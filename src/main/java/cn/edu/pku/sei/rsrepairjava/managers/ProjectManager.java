@@ -2,7 +2,11 @@ package cn.edu.pku.sei.rsrepairjava.managers;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,14 +18,29 @@ import com.github.antlrjavaparser.JavaParser;
  */
 
 public class ProjectManager {
+	
+	private static String backupSuffix = "_backup";
+	
 	private String path; // Path of the current project
-	private List<String> sourceFiles; // Relative pathes of source files that maybe modified
+	private ArrayList<String> sourceFiles; // Relative pathes of source files that maybe modified
 	
 	public ProjectManager(String path){
 		this.path = new File(path).getAbsolutePath();
 		this.sourceFiles = new ArrayList<String>();
 		this.collectSourceFiles(new File(this.path));
 		this.backupSourceFiles();
+	}
+	
+	public ProjectManager(String path, boolean backup){
+		this.path = new File(path).getAbsolutePath();
+		this.sourceFiles = new ArrayList<String>();
+		this.collectSourceFiles(new File(this.path));
+		if (backup)
+			this.backupSourceFiles();
+	}
+	
+	public ArrayList<String> getSourceFiles(){
+		return this.sourceFiles;
 	}
 	
 	/**
@@ -62,13 +81,38 @@ public class ProjectManager {
 	 * Backup source files
 	 */
 	private void backupSourceFiles(){
-		
+		for (String filePath : this.sourceFiles){
+			File origFile = new File(this.path+"/"+filePath);
+			File backupFile  = new File(this.path+backupSuffix+"/"+filePath);
+			if (!backupFile.getParentFile().exists())
+				backupFile.getParentFile().mkdirs();
+			if (!backupFile.exists())
+			try { backupFile.createNewFile(); } 
+			catch (IOException e) { e.printStackTrace();}
+			try(
+					FileChannel in = new FileInputStream(origFile).getChannel();
+					FileChannel out = new FileOutputStream(backupFile).getChannel()
+					){
+				out.transferFrom(in, 0, in.size());
+			}catch(IOException e){
+			}
+		}
 	}
 	
 	/**
 	 * Restore the source files from the backup
 	 */
 	public void restoreSourceFiles(){
-		
+		for (String filePath : this.sourceFiles){
+			File origFile = new File(this.path+"/"+filePath);
+			File backupFile  = new File(this.path+backupSuffix+"/"+filePath);
+			try(
+					FileChannel in = new FileInputStream(backupFile).getChannel();
+					FileChannel out = new FileOutputStream(origFile).getChannel()
+					){
+				out.transferFrom(in, 0, in.size());
+			}catch(IOException e){
+			}
+		}
 	}
 }
