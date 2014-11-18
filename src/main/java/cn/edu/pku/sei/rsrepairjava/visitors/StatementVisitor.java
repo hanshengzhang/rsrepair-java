@@ -9,10 +9,9 @@ import com.github.antlrjavaparser.api.stmt.*;
 import com.github.antlrjavaparser.api.type.Type;
 import com.github.antlrjavaparser.api.visitor.VoidVisitorAdapter;
 
-public class StatementVisitor<A> extends VoidVisitorAdapter<A> {
+public abstract class StatementVisitor<A> extends VoidVisitorAdapter<A> {
 
-	public void visitStatement(Statement s, A arg){
-	}
+	public abstract void visitStatement(Statement s, A arg);
 	
 	@Override
 	public void visit(AssertStmt s, A arg){

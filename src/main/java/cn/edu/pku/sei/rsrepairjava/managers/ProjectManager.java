@@ -20,7 +20,7 @@ public class ProjectManager {
 	private static String backupSuffix = "_backup";
 	
 	private String path; // Path of the current project
-	private ArrayList<String> sourceFiles; // Relative pathes of source files that maybe modified
+	private ArrayList<String> sourceFiles; // Relative paths of source files that maybe modified
 	private String srcPath;
 	private IProjectExecutor executor;
 	public ProjectManager(String path){
