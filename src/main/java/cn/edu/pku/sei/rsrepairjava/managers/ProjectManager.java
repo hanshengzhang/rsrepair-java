@@ -23,12 +23,30 @@ public class ProjectManager {
 	
 	private String path; // Path of the current project
 	private ArrayList<String> sourceFiles; // Relative pathes of source files that maybe modified
-	
+	private String srcPath;
+	private IProjectExecutor executor;
 	public ProjectManager(String path){
 		this.path = new File(path).getAbsolutePath();
 		this.sourceFiles = new ArrayList<String>();
-		this.collectSourceFiles(new File(this.path));
-		this.backupSourceFiles();
+	}
+	
+	public void setExecutor(IProjectExecutor executor){
+		this.executor = executor;
+	}
+	
+	public boolean compileProject(){
+		return executor.compile();
+	}
+	
+	public void setSourcePath(String path){
+		this.srcPath = path;
+	}
+	
+	public ArrayList<String> collectSourceFiles(){
+		if (this.srcPath ==null) this.srcPath = "";
+		File file = new File(this.path+"/"+this.srcPath);
+		this.collectSourceFiles(file);
+		return this.sourceFiles;
 	}
 	
 	public ProjectManager(String path, boolean backup){
@@ -37,6 +55,10 @@ public class ProjectManager {
 		this.collectSourceFiles(new File(this.path));
 		if (backup)
 			this.backupSourceFiles();
+	}
+	
+	public String getPath(){
+		return this.path;
 	}
 	
 	public ArrayList<String> getSourceFiles(){
@@ -80,7 +102,7 @@ public class ProjectManager {
 	/**
 	 * Backup source files
 	 */
-	private void backupSourceFiles(){
+	public void backupSourceFiles(){
 		for (String filePath : this.sourceFiles){
 			File origFile = new File(this.path+"/"+filePath);
 			File backupFile  = new File(this.path+backupSuffix+"/"+filePath);
@@ -115,4 +137,5 @@ public class ProjectManager {
 			}
 		}
 	}
+	
 }

@@ -27,5 +27,4 @@ public class StatementVisitorTest extends TestCase {
 			System.out.println(""+StatementVisitorTest.cnt++ +"-"+s.getClass().getName()+":"+s.toString());
 		}
 	}
-	
 }
