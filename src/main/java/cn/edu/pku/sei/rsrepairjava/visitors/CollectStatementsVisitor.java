@@ -1,6 +1,9 @@
 package cn.edu.pku.sei.rsrepairjava.visitors;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.github.antlrjavaparser.api.stmt.BlockStmt;
 import com.github.antlrjavaparser.api.stmt.Statement;
@@ -14,8 +17,28 @@ public class CollectStatementsVisitor extends StatementVisitor<Boolean> {
 	
 	private ArrayList<Statement> statements;
 	
+	public static String ignorePattern = ".*(super|this)[\\s\\t\\n]*\\(.*";
+	
 	public CollectStatementsVisitor() {
 		statements = new ArrayList<Statement>();
+	}
+	
+	public static boolean canIgnore(String s){
+		Pattern p = Pattern.compile("\r|\n");
+		Matcher m = p.matcher(s);
+		s = m.replaceAll(" ");
+		return s.matches(CollectStatementsVisitor.ignorePattern);
+	}
+	
+	private void appendStatements(List<Statement> stmts){
+		if (stmts == null)
+			return;
+		for (Statement s:stmts){
+			String exprStr = s.toString();
+			if (CollectStatementsVisitor.canIgnore(exprStr))
+				continue;
+			this.statements.add(s);
+		}
 	}
 	
 	@Override
@@ -23,11 +46,11 @@ public class CollectStatementsVisitor extends StatementVisitor<Boolean> {
 		// TODO Auto-generated method stub
 		if (s instanceof BlockStmt){
 			BlockStmt block = (BlockStmt) s;
-			statements.addAll(block.getStmts());
+			this.appendStatements(block.getStmts());
 		}
 		else if (s instanceof SwitchEntryStmt){
 			SwitchEntryStmt switchEntry = (SwitchEntryStmt) s;
-			statements.addAll(switchEntry.getStmts());
+			this.appendStatements(switchEntry.getStmts());
 		}
 	}
 	

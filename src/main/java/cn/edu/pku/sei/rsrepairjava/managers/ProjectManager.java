@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+
 import com.github.antlrjavaparser.JavaParser;
 
 /**
@@ -19,6 +20,7 @@ public class ProjectManager {
 	
 	private static String backupSuffix = "_backup";
 	
+	
 	private String path; // Path of the current project
 	private ArrayList<String> sourceFiles; // Relative paths of source files that maybe modified
 	private String srcPath;
@@ -26,6 +28,10 @@ public class ProjectManager {
 	public ProjectManager(String path){
 		this.path = new File(path).getAbsolutePath();
 		this.sourceFiles = new ArrayList<String>();
+	}
+	
+	public String getBackupPath(){
+		return this.path + ProjectManager.backupSuffix;
 	}
 	
 	public void setExecutor(IProjectExecutor executor){
@@ -136,4 +142,17 @@ public class ProjectManager {
 		}
 	}
 	
+	public void formatPrints(){
+		int startIndex = 0;
+		int remain = this.getSourceFiles().size();
+		for (String filePath:this.getSourceFiles()){
+			System.out.println("process "+ filePath + "["+ remain-- + "," +startIndex+"]");
+			try {
+				startIndex = FileHelper.addPrintForeachStatement(this.getBackupPath()+File.separator+filePath, 
+						this.path+File.separator+ filePath, startIndex);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
 }

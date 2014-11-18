@@ -31,7 +31,6 @@ public class AntProjectExecutor implements IProjectExecutor {
 				environment.add(s);
 			}
 			Process p = Runtime.getRuntime().exec(command, environment.toArray(new String[0]), new File(this.path));
-			p.waitFor();
 			BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			String line;
 			while ((line=br.readLine())!=null){
@@ -40,6 +39,7 @@ public class AntProjectExecutor implements IProjectExecutor {
 					flag = true;
 				}
 			}
+			p.waitFor();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}finally{System.setProperty("user.dir", oldDir);}
