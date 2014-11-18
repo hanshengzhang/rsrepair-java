@@ -1,11 +1,8 @@
 package cn.edu.pku.sei.rsrepairjava.managers;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -36,7 +33,6 @@ public class AntProjectExecutor implements IProjectExecutor {
 			Process p = Runtime.getRuntime().exec(command, environment.toArray(new String[0]), new File(this.path));
 			p.waitFor();
 			BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			BufferedReader br_error = new BufferedReader(new InputStreamReader(p.getErrorStream()));
 			String line;
 			while ((line=br.readLine())!=null){
 				String lower = line.toLowerCase();

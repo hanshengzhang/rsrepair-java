@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
-import java.util.List;
-
 import com.github.antlrjavaparser.JavaParser;
 
 /**
